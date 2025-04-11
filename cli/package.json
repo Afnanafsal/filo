@@ -1,21 +1,11 @@
 {
-    "name": "filo-cli",
-    "version": "1.0.0",
-    "description": "Command-line tool for quick file and folder creation",
-    "main": "index.js",
-    "bin": {
-  "filo": "index.js"
+  "name": "filo",
+  "version": "1.0.0",
+  "description": "Command-line tool for quick file and folder creation",
+  "main": "index.js",
+  "bin": {
+    "filo": "index.js"
+  },
+  "preferGlobal": true,
+  "license": "MIT"
 }
-,
-    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [
-      "cli",
-      "file",
-      "folder",
-      "create"
-    ],
-    "author": "",
-    "license": "MIT"
-  }

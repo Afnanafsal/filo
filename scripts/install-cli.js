@@ -1,32 +1,46 @@
-const { exec } = require('child_process');
-const path = require('path');
-const fs = require('fs');
+import * as vscode from 'vscode';
+import * as path from 'path';
+import { exec } from 'child_process';
+import * as fs from 'fs';
 
-// Get the path to the CLI directory
-const cliPath = path.join(__dirname, '..', 'cli');
-
-// Make sure the CLI script is executable
-try {
+export function activate(context) {
+  const cliPath = path.join(context.extensionPath, 'cli');
   const indexJsPath = path.join(cliPath, 'index.js');
-  fs.chmodSync(indexJsPath, '755');
-} catch (err) {
-  console.warn('Could not make CLI script executable:', err.message);
+
+  // Make sure it's executable (for Unix)
+  try {
+    fs.chmodSync(indexJsPath, 0o755);
+  } catch (e) {
+    console.warn('Could not chmod CLI file:', e.message);
+  }
+
+  // Install the CLI globally
+  exec(`npm install -g "${cliPath}"`, (error, stdout, stderr) => {
+    if (error) {
+      vscode.window.showErrorMessage(`❌ Filo CLI install failed: ${error.message}`);
+      return;
+    }
+    vscode.window.showInformationMessage(`✅ Filo CLI installed globally! Use 'filo' in your terminal.`);
+  });
+
+  // Optional command in VS Code
+  const disposable = vscode.commands.registerCommand('filo.createFiles', async () => {
+    const input = await vscode.window.showInputBox({
+      prompt: 'Enter folder/file to create (e.g. src/utils/helper.ts)',
+    });
+
+    if (input) {
+      exec(`filo "${input}"`, (error, stdout, stderr) => {
+        if (error) {
+          vscode.window.showErrorMessage(`Filo Error: ${error.message}`);
+        } else {
+          vscode.window.showInformationMessage(stdout.trim() || '✅ File created');
+        }
+      });
+    }
+  });
+
+  context.subscriptions.push(disposable);
 }
 
-// Install the CLI globally
-console.log('Installing Filo CLI globally...');
-exec('npm install -g .', { cwd: cliPath }, (error, stdout, stderr) => {
-  if (error) {
-    console.error('Failed to install CLI globally:', error.message);
-    console.error('You may need to run this command manually:');
-    console.error(`cd "${cliPath}" && npm install -g .`);
-    return;
-  }
-  
-  if (stderr) {
-    console.error(stderr);
-  }
-  
-  console.log(stdout);
-  console.log('Filo CLI installed successfully!');
-});
+export function deactivate() {}
