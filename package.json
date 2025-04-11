@@ -1,0 +1,36 @@
+{
+  "name": "filo",
+  "displayName": "Filo",
+  "description": "Create folders and files easily from terminal or prompt",
+  "version": "1.0.0",
+  "publisher": "afnanafsal",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/afnanafsal/filo.git"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onCommand:filo.createFiles"],
+  "main": "./out/extension.js",
+  "icon": "./images/icon.png",
+  "contributes": {
+    "commands": [
+      {
+        "command": "filo.createFiles",
+        "title": "Filo: Create Files and Folders"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0",
+    "vscode": "^1.1.42"
+  }
+}
